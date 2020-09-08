@@ -1,5 +1,6 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, response } from 'express';
 import Server from '../clases/server';
+import { usuariosConectados } from '../sockets/socket';
 
 
 export const router = Router();
@@ -48,4 +49,31 @@ router.post ('/mensajes/:id',  (req: Request, res: Response )  => {
         de,
         identificador: identificador
     })
+})
+
+// lista interna de Server.io, solo contiene id de socket
+router.get ('/usuarios',  (req: Request, res: Response )  => {
+   
+    const server = Server.instance;
+
+    server.io.clients((err: any, clients: string []) => {
+      if (err){
+          return res.json ({ 
+              ok: false,
+              err
+          })
+      }
+      res.json ({
+        ok: true,
+        clients})
+    }) 
+})
+
+router.get ('/usuarios/detalle',  (req: Request, res: Response )  => {
+       
+    const lista = usuariosConectados.getLista();
+    res.json ({
+       ok: true,
+       lista
+    }) 
 })

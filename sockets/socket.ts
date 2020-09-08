@@ -11,10 +11,12 @@ export const conectarCliente = (cliente: Socket ) => {
     usuariosConectados.agrear(usuario);
 }
 
-export const desconectar = (cliente: Socket) => {
+export const desconectar = (cliente: Socket, io: SocketIO.Server) => {
     cliente.on('disconnect', () => {
         console.log(`cliente desconectado con id= ${cliente.id}`)
-        usuariosConectados.borrarUsuario(cliente.id)
+        usuariosConectados.borrarUsuario(cliente.id);
+
+        io.emit('mensaje-usuarios-activos', usuariosConectados.getLista())
     })
 }
 
@@ -29,7 +31,18 @@ export const escucharMensajes = (cliente: Socket, io: SocketIO.Server) => {
 export const escucharLogin = (cliente: Socket, io: SocketIO.Server) => {
     cliente.on('configurar-usuario', (payload: { nombre: string }, callback: Function) => {
         usuariosConectados.actualizarNombre(cliente.id, payload.nombre);
-        callback({ok: true, mensaje: `usuario ${payload.nombre} configurado`});
+
+        io.emit('mensaje-usuarios-activos', usuariosConectados.getLista())
+
+        callback({ok: true, 
+                  mensaje: `usuario ${payload.nombre} configurado`});
     });
 }
 
+export const escucharSolicitudMesajeUsuariosACtivos = (cliente: Socket, io: SocketIO.Server) => {
+    cliente.on('mensaje-solicitud-usuarios-activos', () => {
+
+        io.to( cliente.id ).emit('mensaje-usuarios-activos', usuariosConectados.getLista())
+
+    });
+}

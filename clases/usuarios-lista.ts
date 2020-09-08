@@ -8,6 +8,9 @@ export class UsuariosLista {
     }
     
     public agrear (usuario: Usuario): Usuario {
+
+        console.log(`agregar, usuario.nombre:${usuario.nombre}, id:${usuario.id}`);
+
         if (this.getUsuario(usuario.id) !== undefined) {
             console.log (`***** error el identificador de soket ya exite ******, id= ${usuario.id}`);
             const usuarioEliminado = this.borrarUsuario (usuario.id);
@@ -19,6 +22,8 @@ export class UsuariosLista {
     }
 
     public actualizarNombre (id: string, nombre: string) {
+        console.log(`actuliarNombre, id:${id}, nombre:${nombre}`);
+
         for( let usuario of this.lista) {
            if (usuario.id === id) {
                usuario.nombre = nombre;
@@ -29,7 +34,10 @@ export class UsuariosLista {
     }
 
     public getLista () {
-        return this.lista
+        return this.lista.filter ( (usuario) => {
+          return usuario.nombre !== 'sin-nombre'
+        }  
+        )
     }
 
     public getUsuario (id: string){
@@ -41,10 +49,15 @@ export class UsuariosLista {
     }
 
     public borrarUsuario (id: string){
+        
+        console.log(`borrarUsuario, id:${id}`);
+
         const usuarioTemp = this.getUsuario(id);
         this.lista = this.lista.filter (usuario => {
             return usuario.id !== id;
         });
+        
+        console.log (this.lista); 
         return usuarioTemp;
     }
 

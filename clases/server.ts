@@ -41,11 +41,12 @@ export default class Server {
 
             socket.escucharMensajes (cliente, this.io);
             
-            socket.desconectar(cliente);
+            socket.desconectar(cliente, this.io);
 
             socket.escucharLogin(cliente, this.io);
 
-           
+            socket.escucharSolicitudMesajeUsuariosACtivos(cliente, this.io)
+         
 
             })
         }
